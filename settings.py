@@ -7,6 +7,7 @@ def test_names():
     test_list.append('pcontinue')
     test_list.append('pcopy')
     test_list.append('ptrace')
+    test_list.append('spiral')
     return test_list
 
 
@@ -38,3 +39,11 @@ def pixel_properties():
     x_mm2pix = 5.17
     y_mm2pix = 5.15
     return x_mm2pix, y_mm2pix
+
+def spiral_parameters():
+    # the following parameters were found experimentally for iPad version
+    a = 1.4
+    b = 8
+    angle_0 = 0
+    angle_1 = 11.32 * 3.14# alternatively import numpy and call value pi
+    return a, b, angle_0, angle_1

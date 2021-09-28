@@ -30,6 +30,11 @@ def data_loader(PATH, depict, export, units, number_of_intervals, test_name):
                     # compute features and add to the corresponding vector
 
                     test_data = data_reader.data_reader(file_name)
+                    if test_name == 'spiral':
+                        collections_of_single_intervals[subject], collections_of_cumulative_intervals[
+                            subject] = segmenter_discrete.spiral_segmenter_discrete(test_data, number_of_intervals, units)
+
                     collections_of_single_intervals[subject], collections_of_cumulative_intervals[subject] = segmenter_discrete.segmenter_discrete(test_data, number_of_intervals, units)
+                    print(file_name, "has been processed")
 
     return collections_of_single_intervals, collections_of_cumulative_intervals
