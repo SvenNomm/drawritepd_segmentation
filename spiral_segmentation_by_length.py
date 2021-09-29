@@ -17,5 +17,5 @@ PATH_KT = '/Users/sven/kohalikTree/Data/MeDiag/DATA/KT/'
 PATH = '/Users/sven/kohalikTree/Data/MeDiag/DATA/interval_analysis/'
 
 collections_of_single_intervals, collections_of_cumulative_intervals = files_reader.data_loader(PATH_KT, False, False, 'mm', number_of_intervals, test_names[test_nr])
-plot_intervals_for_verefication.plot_intervals(collections_of_single_intervals)
+plot_intervals_for_verefication.plot_intervals(collections_of_cumulative_intervals)
 print('Thats all folks!')

@@ -11,6 +11,10 @@ def plot_intervals(collection_of_intervals):
         number_of_intervals = len(segments)
         for j in range(0, number_of_intervals):
             segment = segments[j]
-            fig1, axis = plt.subplots()
-            plt.plot(segment['x'],segment['y'])
-            plt.show()
+            if segment.empty:
+                print('segment', j, "is empty")
+            else:
+                plt.close('all')
+                fig1, axis = plt.subplots()
+                plt.plot(segment['x'],segment['y'])
+                plt.show()

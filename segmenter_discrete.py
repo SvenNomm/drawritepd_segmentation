@@ -37,9 +37,8 @@ def plotting_length_based_segmentation(dataset, nr_of_segments):
     rows = len(dataset)
     consequent_distances = np.zeros(rows)
     for i in range(1, rows):
-        print(i)
-        if i == 1:
-            print("fff", dataset.loc[i, 'x'], "fff",dataset.loc[i - 1, 'x'], "fff", dataset.loc[i, 'y'], "fff", dataset.loc[i - 1, 'y'])
+        #print(i)
+
         consequent_distances[i] = np.sqrt(
             (dataset.loc[i, 'x'] - dataset.loc[i - 1, 'x']) ** 2 + (dataset.loc[i, 'y'] - dataset.loc[i - 1, 'y']) ** 2)
 
@@ -102,12 +101,12 @@ def spiral_segmenter_discrete(dataset, number_of_segments, units):
             ref_pattern = pd.DataFrame(j)
 
     number_of_points = len(ref_pattern)
-    print("number_of_points = ", number_of_points)
+    #print("number_of_points = ", number_of_points)
     center = [ref_pattern.loc[0,'x'], ref_pattern.loc[0,'y']]
     x, y = support.create_spiral(center, number_of_points)
     #segmenting_points = support.get_spiral_segments(center, number_of_points, number_of_intervals)
     segmenting_points, cumulative_intervals, single_intervals = plotting_length_based_segmentation(dataset, number_of_segments)
-    print(center)
+    #print(center)
     fig, axs = plt.subplots()
     plt.plot(dataset['x'], dataset['y'] * (-1), linewidth=5, color='gold', alpha=0.7)
     #plt.plot(x, y * (-1), linewidth=5, color='red', alpha=0.7)

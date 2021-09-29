@@ -16,6 +16,7 @@ def data_reader(file_name):
         test_data_frame = test_data_frame.append(stroke)
         strokes_counter = strokes_counter + 1
 
-
+    test_data_frame = test_data_frame.reset_index()
+    del test_data_frame['index']
     print('data shape:', test_data_frame.shape, 'strokes:', strokes_counter)
     return test_data_frame
