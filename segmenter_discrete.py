@@ -7,6 +7,7 @@ import pandas as pd
 import json
 import matplotlib.pyplot as plt
 import support
+from scipy import spatial
 
 
 def segmenter_discrete(dataset, number_of_intervals, units):
@@ -82,6 +83,55 @@ def plotting_length_based_segmentation(dataset, nr_of_segments):
     return segmenting_points, cumulative_intervals, single_intervals
 
 
+def true_plotting_length_based_segmentation(dataset, nr_of_segments):
+    # hardcoded part
+    PATH_to_ref = '/Users/sven/kohalikTree/Data/MeDiag/reference-shapes/'
+    ref_file_name = PATH_to_ref + 'spiral.json'
+    with open(ref_file_name) as reference_file:
+        ref_data = json.load(reference_file)
+
+        for j in ref_data['data']:
+            ref_pattern = pd.DataFrame(j)
+
+    segmenting_ref_points, _, _ = plotting_length_based_segmentation(ref_pattern, nr_of_segments)
+    segmenting_array = np.zeros((len(segmenting_ref_points), 2))
+    segmenting_array[:, 0] = np.asarray(segmenting_ref_points['x'])
+    segmenting_array[:, 1] = np.asarray(segmenting_ref_points['y'])
+
+    rows = len(dataset)
+    observed_plot = np.zeros((rows, 2))
+    observed_plot[:, 0] = np.asarray(dataset['x'])
+    observed_plot[:, 1] = np.asarray(dataset['y'])
+    index = []
+    for i in range(0, len(segmenting_ref_points)):
+        index.append(spatial.KDTree(observed_plot).query(segmenting_array[i, :])[1])
+
+    index_array = np.array(index).reshape(len(segmenting_ref_points), 1)
+    segmenting_array = np.hstack((index_array, segmenting_array))
+    index = index_array.flatten().tolist()
+    segmenting_array = segmenting_array[np.argsort(segmenting_array[:, 0])]
+
+    segmenting_points = dataset.iloc[index, :]
+    segmenting_points.reset_index(inplace=True)
+    segmenting_points = segmenting_points.rename(columns = {'index': 'idx'})
+
+    single_intervals = {}
+    cumulative_intervals = {}
+
+    for i in range(0, nr_of_segments):
+        single_intervals[i] = pd.DataFrame()
+        cumulative_intervals[i] = pd.DataFrame()
+
+    for i in range(1, nr_of_segments):
+        interval_data_single = dataset.loc[segmenting_points.loc[i - 1, 'idx']:segmenting_points.loc[i, 'idx'], :]
+        interval_data_cumulative = dataset.loc[0:segmenting_points.loc[i, 'idx'], :]
+
+        cumulative_intervals[i] = noise_filter.noise_filter(interval_data_cumulative)
+        single_intervals[i] = noise_filter.noise_filter(interval_data_single)
+
+    return segmenting_points, cumulative_intervals, single_intervals
+
+
 def spiral_segmenter_discrete(dataset, number_of_segments, units):
     # based on the screen resolution perform drawing segmentation
 
@@ -105,7 +155,7 @@ def spiral_segmenter_discrete(dataset, number_of_segments, units):
     center = [ref_pattern.loc[0,'x'], ref_pattern.loc[0,'y']]
     x, y = support.create_spiral(center, number_of_points)
     #segmenting_points = support.get_spiral_segments(center, number_of_points, number_of_intervals)
-    segmenting_points, cumulative_intervals, single_intervals = plotting_length_based_segmentation(dataset, number_of_segments)
+    segmenting_points, cumulative_intervals, single_intervals = true_plotting_length_based_segmentation(dataset, number_of_segments)
     #print(center)
     fig, axs = plt.subplots()
     plt.plot(dataset['x'], dataset['y'] * (-1), linewidth=5, color='gold', alpha=0.7)
